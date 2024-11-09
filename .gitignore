@@ -1,0 +1,45 @@
+# PHP-specific
+*.phar
+*.phpt
+
+# Composer
+composer.phar
+/vendor/
+# Commit your application's lock file https://getcomposer.org/doc/01-basic-usage.md#commit-your-composer-lock-file-to-version-control
+# You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file
+
+# PHPUnit
+phpunit.xml
+tests/phpunit.xml
+tests/bootstrap.php
+tests/phpunit.xml.dist
+
+# PHPStorm
+.idea/
+*.iml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/usage.view.xml
+.idea/dictionaries
+
+# VSCode
+.vscode/
+.history/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+php_error.log
+
+# Build artifacts
+build/
+dist/
+coverage/
+
+# Configuration files
+.env
+.env.*
+!.env.example
