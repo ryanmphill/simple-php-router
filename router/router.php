@@ -63,6 +63,50 @@ class Router
     }
 
     /**
+     * Register a new redirect route
+     * 
+     * Accepts a request path and a redirect path. When the request path is matched,
+     * the user will be redirected to the redirect path.
+     * 
+     * @param string $requestPath The path to match
+     * @param string $redirectPath The path to redirect to
+     * 
+     * @return void
+     */
+    public function redirect($requestPath, $redirectPath)
+    {
+
+        $requestPath = rtrim($requestPath, '/'); // Remove trailing slash
+        $redirectPath = trim($redirectPath, '/'); // Remove leading and trailing slash
+        // Add '/api' to the redirect path
+        $redirectPath = "/api/{$redirectPath}";
+
+
+        $this->routes['REDIRECT'][$requestPath] = function () use ($redirectPath) {
+            header("Location: {$redirectPath}");
+            exit();
+        };
+    }
+
+    public function permanentRedirect($requestPath, $redirectPath)
+    {
+        $requestPath = rtrim($requestPath, '/'); // Remove trailing slash
+        $redirectPath = trim($redirectPath, '/'); // Remove leading and trailing slash
+        // Add '/api' to the redirect path
+        $redirectPath = "/api/{$redirectPath}";
+
+        $this->routes['REDIRECT'][$requestPath] = function () use ($redirectPath) {
+            header("Location: {$redirectPath}", true, 301);
+            exit();
+        };
+    }
+
+    private function isRedirect($request)
+    {
+        return isset($this->routes['REDIRECT'][$request]);
+    }
+
+    /**
      * The default handler for static routes
      * 
      * This handler is called when no custom handler is provided for a route.
@@ -114,6 +158,11 @@ class Router
         $requestUri = rtrim($requestUri, '/'); // Remove trailing slash
         $requestUri = strtolower($requestUri);
         $parsedUrl = explode("/", parse_url($requestUri, PHP_URL_PATH));
+
+        // Check if the request is a redirect
+        if ($this->isRedirect($requestUri)) {
+            return call_user_func($this->routes['REDIRECT'][$requestUri]);
+        }
 
         // Check static routes
         $staticPath = implode('/', $parsedUrl);
