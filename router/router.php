@@ -62,6 +62,39 @@ class Router
         $this->routes[$method][$pattern] = ['dynamic' => true, 'handler' => $handler];
     }
 
+    public function registerAPIGroup($path, $class)
+    {
+        $getHandler = function () use ($class) {
+            $class::list();
+        };
+        $this->routes['GET'][$path] = ['dynamic' => false, 'handler' => $getHandler];
+
+        $getHandler = function ($pk) use ($class) {
+            $class::retrieve($pk);
+        };
+        $this->routes['GET']["{$path}/{pk}"] = ['dynamic' => true, 'handler' => $getHandler];
+
+        $postHandler = function ($pk) use ($class) {
+            $class::doPost($pk);
+        };
+        $this->routes['POST']["{$path}/{pk}"] = ['dynamic' => true, 'handler' => $postHandler];
+
+        $putHandler = function ($pk) use ($class) {
+            $class::doPut($pk);
+        };
+        $this->routes['PUT']["{$path}/{pk}"] = ['dynamic' => true, 'handler' => $putHandler];
+
+        $deleteHandler = function ($pk) use ($class) {
+            $class::doDelete($pk);
+        };
+        $this->routes['DELETE']["{$path}/{pk}"] = ['dynamic' => true, 'handler' => $deleteHandler];
+
+        $optionsHandler = function () use ($class) {
+            $class::doOptions();
+        };
+        $this->routes['OPTIONS'][$path] = ['dynamic' => true, 'handler' => $optionsHandler];
+    }
+
     /**
      * Register a new redirect route
      * 
